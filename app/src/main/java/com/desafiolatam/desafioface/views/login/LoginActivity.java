@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.desafiolatam.desafioface.R;
 import com.desafiolatam.desafioface.background.RecentUserService;
-import com.desafiolatam.desafioface.views.MainActivity;
+import com.desafiolatam.desafioface.views.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity implements SessionCallback {
 

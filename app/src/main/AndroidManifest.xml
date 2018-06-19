@@ -39,8 +39,8 @@
             android:label="@string/title_activity_login"
             android:theme="@style/LoginTheme" />
         <activity
-            android:name=".views.MainActivity"
-            android:label="@string/title_activity_main"
+            android:name=".views.main.MainActivity"
+
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service

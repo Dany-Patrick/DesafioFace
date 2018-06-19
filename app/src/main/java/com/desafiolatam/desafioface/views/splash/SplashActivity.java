@@ -12,8 +12,8 @@ import android.view.View;
 
 import com.desafiolatam.desafioface.R;
 import com.desafiolatam.desafioface.background.RecentUserService;
-import com.desafiolatam.desafioface.views.MainActivity;
 import com.desafiolatam.desafioface.views.login.LoginActivity;
+import com.desafiolatam.desafioface.views.main.MainActivity;
 
 public class SplashActivity extends AppCompatActivity implements LoginCallback{
     IntentFilter intentFilter ;
@@ -21,15 +21,7 @@ public class SplashActivity extends AppCompatActivity implements LoginCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        intentFilter = new IntentFilter(RecentUserService.USERS_FINISHED);
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Intent mainIntent = new Intent(context,MainActivity.class);
-                startActivity(mainIntent);
-                finish();
-            }
-        };
+
         setContentView(R.layout.activity_splash);
 
         View view = findViewById(R.id.root);
@@ -39,14 +31,25 @@ public class SplashActivity extends AppCompatActivity implements LoginCallback{
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
         new LoginValidator(this).init();
+        intentFilter = new IntentFilter(RecentUserService.USERS_FINISHED);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(RecentUserService.USERS_FINISHED.equals(intent.getAction()))
+                {
+                    startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                    finish();
+                }
+
+            }
+        };
+
     }
 
     @Override
     public void signed() {
-        Intent intent = new Intent(this, RecentUserService.class);
-        startService(intent);
+        RecentUserService.startActionRecentUsers(this);
     }
 
     @Override
@@ -63,12 +66,12 @@ public class SplashActivity extends AppCompatActivity implements LoginCallback{
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,intentFilter);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 }
